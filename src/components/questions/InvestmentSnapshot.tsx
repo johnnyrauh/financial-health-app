@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, ArrowLeft, PieChart, Percent, UserCheck } from "lucide-react"
-import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts"
+import { ArrowRight, ArrowLeft, PieChart, Percent, UserCheck, TrendingUp, Landmark, Banknote, MoreHorizontal, Globe } from "lucide-react"
+import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { QuestionLayout } from "@/components/shared/QuestionLayout"
 import { SelectionButton } from "@/components/shared/SelectionButton"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,12 @@ import { Slider } from "@/components/ui/slider"
 import { useApp } from "@/context/AppContext"
 import { INVESTMENT_OPTIONS, EXPENSE_RATIO_OPTIONS, ADVISOR_FEE_OPTIONS } from "@/types"
 
-const COLORS = ["#6366f1", "#8b5cf6", "#10b981", "#f59e0b"]
+const ALLOCATION_CONFIG = [
+  { key: "stocks" as const, label: "Stocks", color: "#6366f1", icon: TrendingUp, description: "Equities & index funds" },
+  { key: "bonds" as const, label: "Bonds", color: "#8b5cf6", icon: Landmark, description: "Fixed income" },
+  { key: "cash" as const, label: "Cash", color: "#10b981", icon: Banknote, description: "Savings & money market" },
+  { key: "other" as const, label: "Other", color: "#f59e0b", icon: MoreHorizontal, description: "Real estate, crypto, etc." },
+]
 
 export function InvestmentSnapshot() {
   const { state, dispatch, goNext, goBack } = useApp()
@@ -25,12 +30,9 @@ export function InvestmentSnapshot() {
     value: number
   ) => {
     const allocation = { ...userData.allocation }
-
-    // Adjust other to maintain 100% total
     allocation[type] = value
     allocation.other = Math.max(0, 100 - allocation.stocks - allocation.bonds - allocation.cash)
 
-    // If other goes negative, we need to reduce one of the others
     if (allocation.other < 0) {
       allocation[type] = value + allocation.other
       allocation.other = 0
@@ -55,10 +57,10 @@ export function InvestmentSnapshot() {
   }
 
   const pieData = [
-    { name: "Stocks", value: userData.allocation.stocks },
-    { name: "Bonds", value: userData.allocation.bonds },
-    { name: "Cash", value: userData.allocation.cash },
-    { name: "Other", value: userData.allocation.other },
+    { name: "Stocks", value: userData.allocation.stocks, color: "#6366f1" },
+    { name: "Bonds", value: userData.allocation.bonds, color: "#8b5cf6" },
+    { name: "Cash", value: userData.allocation.cash, color: "#10b981" },
+    { name: "Other", value: userData.allocation.other, color: "#f59e0b" },
   ].filter((d) => d.value > 0)
 
   const canProceed = () => {
@@ -66,7 +68,7 @@ export function InvestmentSnapshot() {
       case 0:
         return userData.totalInvested !== ""
       case 1:
-        return true // Allocation always sums to 100
+        return true
       case 2:
         return userData.expenseRatio !== ""
       case 3:
@@ -102,13 +104,13 @@ export function InvestmentSnapshot() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-              <PieChart className="w-8 h-8 text-green-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm">
+              <PieChart className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               Approximately how much do you have invested?
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {INVESTMENT_OPTIONS.map((option) => (
                 <SelectionButton
                   key={option.value}
@@ -129,60 +131,157 @@ export function InvestmentSnapshot() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
+            className="space-y-4 sm:space-y-6"
           >
-            <p className="text-slate-600 text-center mb-6">
-              What's your approximate asset allocation?
-            </p>
+            {/* Header */}
+            <div className="text-center">
+              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 shadow-sm">
+                <PieChart className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
+              </div>
+              <p className="text-slate-600 text-sm sm:text-base">
+                What's your approximate asset allocation?
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <AllocationSlider
-                  label="Stocks"
-                  value={userData.allocation.stocks}
-                  onChange={(v) => handleAllocationChange("stocks", v)}
-                  color="#6366f1"
-                />
-                <AllocationSlider
-                  label="Bonds"
-                  value={userData.allocation.bonds}
-                  onChange={(v) => handleAllocationChange("bonds", v)}
-                  color="#8b5cf6"
-                />
-                <AllocationSlider
-                  label="Cash"
-                  value={userData.allocation.cash}
-                  onChange={(v) => handleAllocationChange("cash", v)}
-                  color="#10b981"
-                />
+            {/* Mobile-first Layout: Sliders first, then pie chart */}
+            <div className="space-y-4 sm:space-y-6">
+              {/* Allocation Sliders - Full width, stacked vertically */}
+              <div className="space-y-3 sm:space-y-4">
+                {ALLOCATION_CONFIG.slice(0, 3).map((item) => {
+                  const Icon = item.icon
+                  const value = userData.allocation[item.key]
+                  return (
+                    <motion.div
+                      key={item.key}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-slate-50 rounded-xl p-3 sm:p-4 border border-slate-100"
+                    >
+                      {/* Row: Icon + Label + Percentage */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <div
+                          className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm"
+                          style={{ backgroundColor: `${item.color}15` }}
+                        >
+                          <Icon className="w-5 h-5 sm:w-5 sm:h-5" style={{ color: item.color }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-slate-800 text-sm sm:text-base block">
+                            {item.label}
+                          </span>
+                          <p className="text-xs text-slate-500 truncate">{item.description}</p>
+                        </div>
+                        <div
+                          className="text-xl sm:text-2xl font-bold tabular-nums flex-shrink-0"
+                          style={{ color: item.color }}
+                        >
+                          {value}%
+                        </div>
+                      </div>
+
+                      {/* Slider - Full width below the label row */}
+                      <div className="px-1">
+                        <Slider
+                          value={[value]}
+                          onValueChange={(v) => handleAllocationChange(item.key, v[0])}
+                          min={0}
+                          max={100}
+                          step={5}
+                          className="w-full"
+                        />
+                      </div>
+                    </motion.div>
+                  )
+                })}
+
+                {/* Other allocation (read-only, shows when > 0) */}
                 {userData.allocation.other > 0 && (
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-600">Other</span>
-                    <span className="font-semibold text-amber-600">
-                      {userData.allocation.other}%
-                    </span>
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-amber-50 rounded-xl p-3 sm:p-4 border border-amber-200"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center bg-amber-100 flex-shrink-0">
+                        <MoreHorizontal className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="font-semibold text-amber-800 text-sm sm:text-base block">Other</span>
+                        <p className="text-xs text-amber-600">Remaining allocation</p>
+                      </div>
+                      <div className="text-xl sm:text-2xl font-bold tabular-nums text-amber-600 flex-shrink-0">
+                        {userData.allocation.other}%
+                      </div>
+                    </div>
+                  </motion.div>
                 )}
+
+                {/* Total indicator */}
+                <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                  <span className="font-medium text-indigo-700 text-sm sm:text-base">Total</span>
+                  <span className="text-lg sm:text-xl font-bold text-indigo-600">
+                    {userData.allocation.stocks + userData.allocation.bonds + userData.allocation.cash + userData.allocation.other}%
+                  </span>
+                </div>
               </div>
 
-              <div className="h-48 md:h-auto">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={2}
-                      dataKey="value"
+              {/* Pie Chart - Full width on mobile, below sliders */}
+              <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-2xl p-4 sm:p-6 border border-slate-100">
+                <h3 className="text-center font-semibold text-slate-700 mb-3 sm:mb-4 text-sm sm:text-base">
+                  Your Portfolio Mix
+                </h3>
+
+                {/* Pie Chart - Responsive size */}
+                <div className="h-44 sm:h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RePieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius="45%"
+                        outerRadius="75%"
+                        paddingAngle={3}
+                        dataKey="value"
+                        animationBegin={0}
+                        animationDuration={500}
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            stroke="white"
+                            strokeWidth={2}
+                          />
+                        ))}
+                      </Pie>
+                    </RePieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Legend - Grid on mobile */}
+                <div className="grid grid-cols-2 gap-2 mt-3 sm:mt-4">
+                  {pieData.map((item) => (
+                    <motion.div
+                      key={item.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="flex items-center gap-2 bg-white rounded-lg px-2.5 py-2 sm:px-3 sm:py-2 shadow-sm border border-slate-100"
                     >
-                      {pieData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Legend />
-                  </RePieChart>
-                </ResponsiveContainer>
+                      <div
+                        className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="text-xs sm:text-sm text-slate-600 truncate">{item.name}</span>
+                      <span
+                        className="text-xs sm:text-sm font-bold ml-auto"
+                        style={{ color: item.color }}
+                      >
+                        {item.value}%
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -196,13 +295,13 @@ export function InvestmentSnapshot() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-              <Percent className="w-8 h-8 text-purple-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm">
+              <Percent className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               What's the average expense ratio of your investments?
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {EXPENSE_RATIO_OPTIONS.map((option) => (
                 <SelectionButton
                   key={option.value}
@@ -225,13 +324,13 @@ export function InvestmentSnapshot() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-              <UserCheck className="w-8 h-8 text-blue-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-sm">
+              <UserCheck className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               Do you work with a financial advisor?
             </p>
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
               <SelectionButton
                 label="Yes"
                 selected={userData.hasAdvisor}
@@ -248,9 +347,9 @@ export function InvestmentSnapshot() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="space-y-3"
+                className="space-y-2 sm:space-y-3"
               >
-                <p className="text-slate-600 text-center mb-4">
+                <p className="text-slate-600 text-center mb-3 sm:mb-4 text-sm sm:text-base">
                   What do they charge?
                 </p>
                 {ADVISOR_FEE_OPTIONS.map((option) => (
@@ -279,53 +378,20 @@ export function InvestmentSnapshot() {
       currentStep={3}
       totalSteps={7}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
         {renderStep()}
 
-        <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-          <Button variant="outline" onClick={handleBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+        <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-100">
+          <Button variant="outline" onClick={handleBack} className="min-w-[100px] sm:min-w-[120px]">
+            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="text-sm sm:text-base">Back</span>
           </Button>
-          <Button onClick={handleNext} disabled={!canProceed()}>
-            {step < 3 ? "Continue" : "Next"}
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button onClick={handleNext} disabled={!canProceed()} className="min-w-[100px] sm:min-w-[120px]">
+            <span className="text-sm sm:text-base">{step < 3 ? "Continue" : "Next"}</span>
+            <ArrowRight className="w-4 h-4 ml-1 sm:ml-2" />
           </Button>
         </div>
       </div>
     </QuestionLayout>
-  )
-}
-
-function AllocationSlider({
-  label,
-  value,
-  onChange,
-  color,
-}: {
-  label: string
-  value: number
-  onChange: (value: number) => void
-  color: string
-}) {
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-          <span className="text-sm font-medium text-slate-700">{label}</span>
-        </div>
-        <span className="text-sm font-semibold" style={{ color }}>
-          {value}%
-        </span>
-      </div>
-      <Slider
-        value={[value]}
-        onValueChange={(v) => onChange(v[0])}
-        min={0}
-        max={100}
-        step={5}
-      />
-    </div>
   )
 }

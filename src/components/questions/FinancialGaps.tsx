@@ -65,12 +65,12 @@ export function FinancialGaps() {
       currentStep={5}
       totalSteps={7}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-        <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6">
-          <ClipboardCheck className="w-8 h-8 text-indigo-600" />
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
+        <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+          <ClipboardCheck className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-2 sm:space-y-3">
           {GAP_ITEMS.map((item, index) => {
             // Hide college savings if no children
             if (item.key === "collegesSavings" && !userData.hasChildren) {
@@ -88,41 +88,39 @@ export function FinancialGaps() {
                 transition={{ delay: index * 0.05 }}
               >
                 <label
-                  className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                  className={`flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all select-none min-h-[60px] ${
                     isChecked
                       ? "border-indigo-500 bg-indigo-50"
-                      : "border-slate-200 hover:border-slate-300 bg-white"
+                      : "border-slate-200 hover:border-slate-300 bg-white active:bg-slate-50"
                   }`}
                 >
-                  <Checkbox
-                    checked={isChecked}
-                    onCheckedChange={() => handleToggle(item.key)}
-                    className="mt-1"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${item.color}`}
-                      >
-                        <Icon className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p
-                          className={`font-semibold ${
-                            isChecked ? "text-indigo-900" : "text-slate-900"
-                          }`}
-                        >
-                          {item.label}
-                        </p>
-                        <p
-                          className={`text-sm ${
-                            isChecked ? "text-indigo-600" : "text-slate-500"
-                          }`}
-                        >
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="flex-shrink-0">
+                    <Checkbox
+                      checked={isChecked}
+                      onCheckedChange={() => handleToggle(item.key)}
+                      className="w-5 h-5 sm:w-6 sm:h-6"
+                    />
+                  </div>
+                  <div
+                    className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center ${item.color}`}
+                  >
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`font-semibold text-sm sm:text-base leading-tight ${
+                        isChecked ? "text-indigo-900" : "text-slate-900"
+                      }`}
+                    >
+                      {item.label}
+                    </p>
+                    <p
+                      className={`text-xs sm:text-sm leading-tight ${
+                        isChecked ? "text-indigo-600" : "text-slate-500"
+                      }`}
+                    >
+                      {item.description}
+                    </p>
                   </div>
                   {isChecked && (
                     <motion.div
@@ -130,9 +128,9 @@ export function FinancialGaps() {
                       animate={{ scale: 1 }}
                       className="flex-shrink-0"
                     >
-                      <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                         <svg
-                          className="w-4 h-4 text-white"
+                          className="w-3 h-3 sm:w-4 sm:h-4 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -157,15 +155,15 @@ export function FinancialGaps() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 p-4 bg-slate-50 rounded-xl"
+          className="mt-4 sm:mt-6 p-3 sm:p-4 bg-slate-50 rounded-xl"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-slate-600">Coverage status</span>
-            <span className="font-semibold text-indigo-600">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-slate-600 text-sm sm:text-base">Coverage status</span>
+            <span className="font-semibold text-indigo-600 text-sm sm:text-base">
               {coveredCount} of {totalCount} items
             </span>
           </div>
-          <div className="mt-2 h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div className="h-2 sm:h-2.5 bg-slate-200 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
               initial={{ width: 0 }}
@@ -175,14 +173,14 @@ export function FinancialGaps() {
           </div>
         </motion.div>
 
-        <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-          <Button variant="outline" onClick={goBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+        <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-100">
+          <Button variant="outline" onClick={goBack} className="min-w-[100px] sm:min-w-[120px]">
+            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="text-sm sm:text-base">Back</span>
           </Button>
-          <Button onClick={goNext}>
-            Next
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button onClick={goNext} className="min-w-[100px] sm:min-w-[120px]">
+            <span className="text-sm sm:text-base">Next</span>
+            <ArrowRight className="w-4 h-4 ml-1 sm:ml-2" />
           </Button>
         </div>
       </div>

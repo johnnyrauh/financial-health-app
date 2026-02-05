@@ -81,10 +81,10 @@ export function BasicInfo() {
             exit={{ opacity: 0, x: -20 }}
           >
             <div className="space-y-4">
-              <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6">
-                <User className="w-8 h-8 text-indigo-600" />
+              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                <User className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-600" />
               </div>
-              <Label htmlFor="name" className="text-lg text-slate-700">
+              <Label htmlFor="name" className="text-base sm:text-lg text-slate-700">
                 What should we call you?
               </Label>
               <Input
@@ -92,8 +92,9 @@ export function BasicInfo() {
                 placeholder="Enter your first name"
                 value={userData.name}
                 onChange={handleNameChange}
-                className="text-lg h-14"
+                className="text-base sm:text-lg h-12 sm:h-14"
                 autoFocus
+                autoComplete="given-name"
               />
             </div>
           </motion.div>
@@ -107,24 +108,26 @@ export function BasicInfo() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="space-y-8">
-              <p className="text-lg text-slate-600 text-center">
+            <div className="space-y-6 sm:space-y-8">
+              <p className="text-base sm:text-lg text-slate-600 text-center">
                 Great to meet you, <span className="font-semibold text-indigo-600">{userData.name}</span>!
               </p>
-              <div className="bg-indigo-50 rounded-2xl p-8 text-center">
-                <p className="text-slate-600 mb-2">Your age</p>
-                <p className="text-5xl font-bold text-indigo-600 mb-6">
+              <div className="bg-indigo-50 rounded-2xl p-5 sm:p-8 text-center">
+                <p className="text-slate-600 mb-2 text-sm sm:text-base">Your age</p>
+                <p className="text-4xl sm:text-5xl font-bold text-indigo-600 mb-5 sm:mb-6">
                   {userData.age}
                 </p>
-                <Slider
-                  value={[userData.age]}
-                  onValueChange={handleAgeChange}
-                  min={18}
-                  max={85}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between mt-2 text-sm text-slate-500">
+                <div className="px-2">
+                  <Slider
+                    value={[userData.age]}
+                    onValueChange={handleAgeChange}
+                    min={18}
+                    max={85}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex justify-between mt-3 text-xs sm:text-sm text-slate-500">
                   <span>18</span>
                   <span>85</span>
                 </div>
@@ -142,13 +145,13 @@ export function BasicInfo() {
             exit={{ opacity: 0, x: -20 }}
           >
             <div className="space-y-4">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-                <DollarSign className="w-8 h-8 text-green-600" />
+              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                <DollarSign className="w-7 h-7 sm:w-8 sm:h-8 text-green-600" />
               </div>
-              <p className="text-slate-600 text-center mb-6">
+              <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
                 What's your approximate annual household income?
               </p>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {INCOME_OPTIONS.map((option) => (
                   <SelectionButton
                     key={option.value}
@@ -171,14 +174,14 @@ export function BasicInfo() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="space-y-6">
-              <div className="mx-auto w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                <Users className="w-8 h-8 text-purple-600" />
+            <div className="space-y-4 sm:space-y-6">
+              <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                <Users className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
               </div>
-              <p className="text-slate-600 text-center mb-6">
+              <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
                 Do you have any children or dependents?
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <SelectionButton
                   label="Yes"
                   selected={userData.hasChildren}
@@ -195,21 +198,23 @@ export function BasicInfo() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="bg-purple-50 rounded-2xl p-6 mt-4"
+                  className="bg-purple-50 rounded-2xl p-4 sm:p-6 mt-4"
                 >
-                  <p className="text-slate-600 mb-2 text-center">Number of children</p>
-                  <p className="text-4xl font-bold text-purple-600 text-center mb-4">
+                  <p className="text-slate-600 mb-2 text-center text-sm sm:text-base">Number of children</p>
+                  <p className="text-3xl sm:text-4xl font-bold text-purple-600 text-center mb-4">
                     {userData.numberOfChildren}
                   </p>
-                  <Slider
-                    value={[userData.numberOfChildren]}
-                    onValueChange={handleChildCountChange}
-                    min={1}
-                    max={6}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between mt-2 text-sm text-slate-500">
+                  <div className="px-2">
+                    <Slider
+                      value={[userData.numberOfChildren]}
+                      onValueChange={handleChildCountChange}
+                      min={1}
+                      max={6}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex justify-between mt-3 text-xs sm:text-sm text-slate-500">
                     <span>1</span>
                     <span>6+</span>
                   </div>
@@ -231,17 +236,17 @@ export function BasicInfo() {
       currentStep={1}
       totalSteps={7}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
         {renderStep()}
 
-        <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-          <Button variant="outline" onClick={handleBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+        <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-100">
+          <Button variant="outline" onClick={handleBack} className="min-w-[100px] sm:min-w-[120px]">
+            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="text-sm sm:text-base">Back</span>
           </Button>
-          <Button onClick={handleNext} disabled={!canProceed()}>
-            {step < 3 ? "Continue" : "Next"}
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button onClick={handleNext} disabled={!canProceed()} className="min-w-[100px] sm:min-w-[120px]">
+            <span className="text-sm sm:text-base">{step < 3 ? "Continue" : "Next"}</span>
+            <ArrowRight className="w-4 h-4 ml-1 sm:ml-2" />
           </Button>
         </div>
       </div>

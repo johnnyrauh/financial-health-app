@@ -112,13 +112,13 @@ export function BehavioralAssessment() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-              <Activity className="w-8 h-8 text-blue-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+              <Activity className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               How often do you make changes to your investments?
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {TRADING_FREQUENCY_OPTIONS.map((option) => (
                 <SelectionButton
                   key={option.value}
@@ -141,13 +141,13 @@ export function BehavioralAssessment() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-6">
-              <AlertTriangle className="w-8 h-8 text-amber-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+              <AlertTriangle className="w-7 h-7 sm:w-8 sm:h-8 text-amber-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               Have you ever sold investments during a market downturn out of fear?
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {PANIC_SELLING_OPTIONS.map((option) => (
                 <SelectionButton
                   key={option.value}
@@ -170,13 +170,13 @@ export function BehavioralAssessment() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <div className="mx-auto w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-              <Eye className="w-8 h-8 text-purple-600" />
+            <div className="mx-auto w-14 h-14 sm:w-16 sm:h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+              <Eye className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
             </div>
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-slate-600 text-center mb-4 sm:mb-6 text-sm sm:text-base">
               How often do you check your investment accounts?
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {CHECKING_FREQUENCY_OPTIONS.map((option) => (
                 <SelectionButton
                   key={option.value}
@@ -205,30 +205,30 @@ export function BehavioralAssessment() {
       currentStep={4}
       totalSteps={7}
     >
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8">
         {renderStep()}
 
         {insight && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200"
+            className="mt-4 sm:mt-6 p-3 sm:p-4 bg-slate-50 rounded-xl border border-slate-200"
           >
-            <p className="text-sm text-slate-600">
+            <p className="text-xs sm:text-sm text-slate-600">
               <span className="font-semibold text-slate-800">Insight: </span>
               {insight}
             </p>
           </motion.div>
         )}
 
-        <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-          <Button variant="outline" onClick={handleBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+        <div className="flex justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-100">
+          <Button variant="outline" onClick={handleBack} className="min-w-[100px] sm:min-w-[120px]">
+            <ArrowLeft className="w-4 h-4 mr-1 sm:mr-2" />
+            <span className="text-sm sm:text-base">Back</span>
           </Button>
-          <Button onClick={handleNext} disabled={!canProceed()}>
-            {step < 2 ? "Continue" : "Next"}
-            <ArrowRight className="w-4 h-4 ml-2" />
+          <Button onClick={handleNext} disabled={!canProceed()} className="min-w-[100px] sm:min-w-[120px]">
+            <span className="text-sm sm:text-base">{step < 2 ? "Continue" : "Next"}</span>
+            <ArrowRight className="w-4 h-4 ml-1 sm:ml-2" />
           </Button>
         </div>
       </div>

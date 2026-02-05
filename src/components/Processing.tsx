@@ -47,17 +47,17 @@ export function Processing() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center p-4 safe-area-inset">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 sm:p-12 max-w-md w-full"
+        className="bg-white/10 backdrop-blur-lg rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 max-w-md w-full"
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", delay: 0.2 }}
-          className="w-20 h-20 mx-auto mb-8 relative"
+          className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 sm:mb-8 relative"
         >
           {/* Spinning loader */}
           <div className="absolute inset-0 rounded-full border-4 border-white/20" />
@@ -68,14 +68,14 @@ export function Processing() {
           />
 
           {/* Center icon */}
-          <div className="absolute inset-2 bg-white/20 rounded-full flex items-center justify-center">
+          <div className="absolute inset-1.5 sm:inset-2 bg-white/20 rounded-full flex items-center justify-center">
             {completedSteps.length === PROCESSING_STEPS.length ? (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring" }}
               >
-                <Check className="w-8 h-8 text-white" />
+                <Check className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </motion.div>
             ) : (
               <motion.div
@@ -86,7 +86,7 @@ export function Processing() {
               >
                 {(() => {
                   const Icon = PROCESSING_STEPS[currentStep]?.icon || Brain
-                  return <Icon className="w-8 h-8 text-white" />
+                  return <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                 })()}
               </motion.div>
             )}
@@ -97,7 +97,7 @@ export function Processing() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl font-bold text-white text-center mb-2"
+          className="text-xl sm:text-2xl font-bold text-white text-center mb-1 sm:mb-2"
         >
           {completedSteps.length === PROCESSING_STEPS.length
             ? "Analysis Complete!"
@@ -108,14 +108,14 @@ export function Processing() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-white/70 text-center mb-8"
+          className="text-white/70 text-center mb-6 sm:mb-8 text-sm sm:text-base"
         >
           {completedSteps.length === PROCESSING_STEPS.length
             ? "Preparing your personalized results..."
             : "This will just take a moment"}
         </motion.p>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           <AnimatePresence mode="popLayout">
             {PROCESSING_STEPS.map((step, index) => {
               const Icon = step.icon
@@ -131,7 +131,7 @@ export function Processing() {
                     x: 0,
                   }}
                   transition={{ delay: index * 0.1 }}
-                  className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
+                  className={`flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-lg sm:rounded-xl transition-all ${
                     isCompleted
                       ? "bg-white/20"
                       : isCurrent
@@ -140,7 +140,7 @@ export function Processing() {
                   }`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all flex-shrink-0 ${
                       isCompleted
                         ? "bg-green-500"
                         : isCurrent
@@ -154,18 +154,18 @@ export function Processing() {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring" }}
                       >
-                        <Check className="w-4 h-4 text-white" />
+                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                       </motion.div>
                     ) : (
                       <Icon
-                        className={`w-4 h-4 ${
+                        className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
                           isCurrent ? "text-white" : "text-white/50"
                         }`}
                       />
                     )}
                   </div>
                   <span
-                    className={`text-sm font-medium ${
+                    className={`text-xs sm:text-sm font-medium flex-1 ${
                       isCompleted || isCurrent
                         ? "text-white"
                         : "text-white/50"
@@ -175,11 +175,11 @@ export function Processing() {
                   </span>
                   {isCurrent && (
                     <motion.div
-                      className="ml-auto"
+                      className="flex-shrink-0"
                       animate={{ opacity: [1, 0.5, 1] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
-                      <div className="w-2 h-2 bg-white rounded-full" />
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
                     </motion.div>
                   )}
                 </motion.div>
