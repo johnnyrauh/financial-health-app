@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, ArrowLeft, PieChart, Percent, UserCheck, TrendingUp, Landmark, Banknote, MoreHorizontal, Globe } from "lucide-react"
+import { ArrowRight, ArrowLeft, PieChart, Percent, UserCheck, TrendingUp, Landmark, Banknote, MoreHorizontal } from "lucide-react"
 import { PieChart as RePieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { QuestionLayout } from "@/components/shared/QuestionLayout"
 import { SelectionButton } from "@/components/shared/SelectionButton"
@@ -9,11 +9,10 @@ import { Slider } from "@/components/ui/slider"
 import { useApp } from "@/context/AppContext"
 import { INVESTMENT_OPTIONS, EXPENSE_RATIO_OPTIONS, ADVISOR_FEE_OPTIONS } from "@/types"
 
-const ALLOCATION_CONFIG = [
+const ADJUSTABLE_ALLOCATIONS = [
   { key: "stocks" as const, label: "Stocks", color: "#6366f1", icon: TrendingUp, description: "Equities & index funds" },
   { key: "bonds" as const, label: "Bonds", color: "#8b5cf6", icon: Landmark, description: "Fixed income" },
   { key: "cash" as const, label: "Cash", color: "#10b981", icon: Banknote, description: "Savings & money market" },
-  { key: "other" as const, label: "Other", color: "#f59e0b", icon: MoreHorizontal, description: "Real estate, crypto, etc." },
 ]
 
 export function InvestmentSnapshot() {
@@ -147,7 +146,7 @@ export function InvestmentSnapshot() {
             <div className="space-y-4 sm:space-y-6">
               {/* Allocation Sliders - Full width, stacked vertically */}
               <div className="space-y-3 sm:space-y-4">
-                {ALLOCATION_CONFIG.slice(0, 3).map((item) => {
+                {ADJUSTABLE_ALLOCATIONS.map((item) => {
                   const Icon = item.icon
                   const value = userData.allocation[item.key]
                   return (
