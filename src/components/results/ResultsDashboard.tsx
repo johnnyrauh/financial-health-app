@@ -8,10 +8,18 @@ import { HeroScore } from "./HeroScore"
 import { CategoryBreakdown } from "./CategoryBreakdown"
 import { PriorityActions } from "./PriorityActions"
 import { PortfolioComparison } from "./PortfolioComparison"
+import { CostAnalysis } from "./CostAnalysis"
 
 export function ResultsDashboard() {
   const { state, dispatch, goToScreen } = useApp()
-  const { scores, recommendations, userData } = state
+  const {
+    scores,
+    recommendations,
+    userData,
+    currentPortfolio,
+    recommendedPortfolio,
+    costData,
+  } = state
 
   useEffect(() => {
     // Trigger confetti for high scores
@@ -90,18 +98,32 @@ export function ResultsDashboard() {
         </motion.section>
 
         {/* Portfolio Comparison */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-8"
-        >
-          <PortfolioComparison
-            currentAllocation={userData.allocation}
-            age={userData.age}
-            retirementTimeline={userData.retirementTimeline}
-          />
-        </motion.section>
+        {currentPortfolio && recommendedPortfolio && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            <PortfolioComparison
+              currentPortfolio={currentPortfolio}
+              recommendedPortfolio={recommendedPortfolio}
+              age={userData.age}
+            />
+          </motion.section>
+        )}
+
+        {/* Cost Analysis */}
+        {costData && costData.totalAnnualSavings > 100 && (
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-8"
+          >
+            <CostAnalysis costData={costData} />
+          </motion.section>
+        )}
 
         {/* Priority Actions */}
         <motion.section

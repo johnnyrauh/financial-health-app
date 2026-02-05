@@ -14,7 +14,7 @@ const CONCERN_SUGGESTIONS = [
 ]
 
 export function BiggestConcern() {
-  const { state, dispatch, goNext, goBack } = useApp()
+  const { state, dispatch, goNext, goBack, calculateResults } = useApp()
   const { userData } = state
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -23,6 +23,11 @@ export function BiggestConcern() {
 
   const handleSuggestionClick = (suggestion: string) => {
     dispatch({ type: "UPDATE_USER_DATA", payload: { biggestConcern: suggestion } })
+  }
+
+  const handleCalculate = () => {
+    calculateResults()
+    goNext()
   }
 
   return (
@@ -83,7 +88,7 @@ export function BiggestConcern() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <Button onClick={goNext}>
+          <Button onClick={handleCalculate}>
             Calculate My Score
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>

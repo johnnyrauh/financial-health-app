@@ -1,12 +1,12 @@
 import { motion } from "framer-motion"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
-import { ArrowRight } from "lucide-react"
-import type { AllocationData } from "@/types"
+import { ArrowRight, AlertTriangle, CheckCircle } from "lucide-react"
+import type { CurrentPortfolio, RecommendedPortfolio } from "@/context/AppContext"
 
 interface PortfolioComparisonProps {
-  currentAllocation: AllocationData
+  currentPortfolio: CurrentPortfolio
+  recommendedPortfolio: RecommendedPortfolio
   age: number
-  retirementTimeline: string
 }
 
 const COLORS = {
@@ -17,63 +17,46 @@ const COLORS = {
 }
 
 export function PortfolioComparison({
-  currentAllocation,
+  currentPortfolio,
+  recommendedPortfolio,
   age,
-  retirementTimeline,
 }: PortfolioComparisonProps) {
-  // Calculate recommended allocation based on age and timeline
-  const getRecommendedAllocation = (): AllocationData => {
-    let stockPercent: number
-
-    switch (retirementTimeline) {
-      case "under-5":
-        stockPercent = 40
-        break
-      case "5-10":
-        stockPercent = 50
-        break
-      case "10-20":
-        stockPercent = 65
-        break
-      case "20-30":
-        stockPercent = 80
-        break
-      case "30-plus":
-        stockPercent = 90
-        break
-      default:
-        stockPercent = Math.max(20, Math.min(90, 110 - age))
-    }
-
-    return {
-      stocks: stockPercent,
-      bonds: Math.round((100 - stockPercent) * 0.8),
-      cash: Math.round((100 - stockPercent) * 0.2),
-      other: 0,
-    }
-  }
-
-  const recommended = getRecommendedAllocation()
-
   const currentData = [
-    { name: "Stocks", value: currentAllocation.stocks, color: COLORS.stocks },
-    { name: "Bonds", value: currentAllocation.bonds, color: COLORS.bonds },
-    { name: "Cash", value: currentAllocation.cash, color: COLORS.cash },
-    { name: "Other", value: currentAllocation.other, color: COLORS.other },
+    { name: "Stocks", value: currentPortfolio.stocks, color: COLORS.stocks },
+    { name: "Bonds", value: currentPortfolio.bonds, color: COLORS.bonds },
+    { name: "Cash", value: currentPortfolio.cash, color: COLORS.cash },
+    { name: "Other", value: currentPortfolio.other, color: COLORS.other },
   ].filter((d) => d.value > 0)
 
   const recommendedData = [
-    { name: "Stocks", value: recommended.stocks, color: COLORS.stocks },
-    { name: "Bonds", value: recommended.bonds, color: COLORS.bonds },
-    { name: "Cash", value: recommended.cash, color: COLORS.cash },
+    { name: "Stocks", value: recommendedPortfolio.stocks, color: COLORS.stocks },
+    { name: "Bonds", value: recommendedPortfolio.bonds, color: COLORS.bonds },
+    { name: "Cash", value: recommendedPortfolio.cash, color: COLORS.cash },
   ].filter((d) => d.value > 0)
 
-  // Check if current allocation is already close to recommended
-  const stockDiff = Math.abs(currentAllocation.stocks - recommended.stocks)
-  const isAlreadyOptimal = stockDiff <= 10 && currentAllocation.cash <= 15
+  // Check if portfolios are similar
+  const stockDiff = Math.abs(currentPortfolio.stocks - recommendedPortfolio.stocks)
+  const isAlreadyOptimal = stockDiff <= 10 && currentPortfolio.cash <= 15 && currentPortfolio.issues.length === 0
 
   if (isAlreadyOptimal) {
-    return null // Don't show comparison if already optimal
+    return (
+      <div className="py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-green-50 rounded-2xl p-6 text-center border border-green-200"
+        >
+          <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-green-800 mb-2">
+            Your Portfolio Looks Good!
+          </h3>
+          <p className="text-green-700">
+            Your current allocation is well-suited for your age and goals.
+          </p>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
@@ -98,6 +81,23 @@ export function PortfolioComparison({
         viewport={{ once: true }}
         className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
       >
+        {/* Issues Alert */}
+        {currentPortfolio.issues.length > 0 && (
+          <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-amber-800 mb-1">Issues Identified</h4>
+                <ul className="text-sm text-amber-700 space-y-1">
+                  {currentPortfolio.issues.map((issue, i) => (
+                    <li key={i}>• {issue}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
           {/* Current Allocation */}
           <div>
@@ -211,18 +211,69 @@ export function PortfolioComparison({
           </div>
         </div>
 
+        {/* Benefits */}
+        {recommendedPortfolio.benefits.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="mt-6 p-4 bg-green-50 rounded-xl border border-green-200"
+          >
+            <h4 className="font-semibold text-green-800 mb-2">Benefits of this allocation:</h4>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {recommendedPortfolio.benefits.map((benefit, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm text-green-700">
+                  <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+
+        {/* Recommended Funds */}
+        {recommendedPortfolio.recommendedFunds && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-6 p-4 bg-indigo-50 rounded-xl"
+          >
+            <h4 className="font-semibold text-indigo-800 mb-3">Recommended Low-Cost Funds:</h4>
+            <div className="grid gap-2">
+              {recommendedPortfolio.recommendedFunds.map((fund) => (
+                <div
+                  key={fund.ticker}
+                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-indigo-100"
+                >
+                  <div>
+                    <span className="font-mono font-semibold text-indigo-600">{fund.ticker}</span>
+                    <span className="text-slate-600 ml-2 text-sm">{fund.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-semibold text-slate-900">{fund.percentage}%</span>
+                    <span className="text-slate-500 text-xs ml-2">({fund.expenseRatio}% ER)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-6 p-4 bg-indigo-50 rounded-xl"
+          transition={{ delay: 0.6 }}
+          className="mt-6 p-4 bg-slate-50 rounded-xl"
         >
-          <p className="text-sm text-indigo-700 text-center">
+          <p className="text-sm text-slate-600 text-center">
             <span className="font-semibold">Why this allocation?</span>
             {" "}
-            Based on your age ({age}) and retirement timeline ({retirementTimeline.replace("-", " ")}),
-            we recommend {recommended.stocks}% in stocks for long-term growth with {recommended.bonds}% in bonds for stability.
+            Based on your age ({age}) and timeline, we recommend {recommendedPortfolio.stocks}% in stocks
+            for long-term growth with {recommendedPortfolio.bonds}% in bonds for stability.
           </p>
         </motion.div>
       </motion.div>

@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Check, Brain, Calculator, LineChart, Shield, Target } from "lucide-react"
 import confetti from "canvas-confetti"
 import { useApp } from "@/context/AppContext"
-import { calculateScores } from "@/lib/scoring"
-import { generateRecommendations } from "@/lib/recommendations"
 import { delay } from "@/lib/utils"
 
 const PROCESSING_STEPS = [
@@ -16,29 +14,21 @@ const PROCESSING_STEPS = [
 ]
 
 export function Processing() {
-  const { state, dispatch, goToScreen } = useApp()
+  const { state, goToScreen } = useApp()
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<number[]>([])
 
   useEffect(() => {
     async function processData() {
-      // Simulate processing with step animations
+      // Animate through steps (calculations already done in BiggestConcern)
       for (let i = 0; i < PROCESSING_STEPS.length; i++) {
         setCurrentStep(i)
-        await delay(800 + Math.random() * 400)
+        await delay(600 + Math.random() * 300)
         setCompletedSteps((prev) => [...prev, i])
       }
 
-      // Calculate actual scores
-      const scores = calculateScores(state.userData)
-      dispatch({ type: "SET_SCORES", payload: scores })
-
-      // Generate recommendations
-      const recommendations = generateRecommendations(state.userData, scores)
-      dispatch({ type: "SET_RECOMMENDATIONS", payload: recommendations })
-
       // Trigger confetti for good scores
-      if (scores.overall >= 70) {
+      if (state.scores && state.scores.overall >= 70) {
         confetti({
           particleCount: 100,
           spread: 70,

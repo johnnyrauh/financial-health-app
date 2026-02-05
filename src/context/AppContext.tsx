@@ -14,12 +14,28 @@ import type {
   FinancialGaps,
 } from "@/types"
 import { INITIAL_USER_DATA } from "@/types"
+import {
+  calculateFinancialHealthScores,
+  generateCurrentPortfolio,
+  generateRecommendedPortfolio,
+  generateCostAnalysis,
+  generateBehavioralAnalysis,
+  generateDetailedRecommendations,
+  type CurrentPortfolio,
+  type RecommendedPortfolio,
+  type CostData,
+  type BehavioralData,
+} from "@/lib/calculations"
 
 interface AppState {
   currentScreen: Screen
   userData: UserData
   scores: Scores | null
   recommendations: Recommendation[]
+  currentPortfolio: CurrentPortfolio | null
+  recommendedPortfolio: RecommendedPortfolio | null
+  costData: CostData | null
+  behavioralData: BehavioralData | null
 }
 
 type AppAction =
@@ -30,6 +46,10 @@ type AppAction =
   | { type: "TOGGLE_GOAL"; payload: string }
   | { type: "SET_SCORES"; payload: Scores }
   | { type: "SET_RECOMMENDATIONS"; payload: Recommendation[] }
+  | { type: "SET_CURRENT_PORTFOLIO"; payload: CurrentPortfolio }
+  | { type: "SET_RECOMMENDED_PORTFOLIO"; payload: RecommendedPortfolio }
+  | { type: "SET_COST_DATA"; payload: CostData }
+  | { type: "SET_BEHAVIORAL_DATA"; payload: BehavioralData }
   | { type: "RESET" }
 
 const initialState: AppState = {
@@ -37,6 +57,10 @@ const initialState: AppState = {
   userData: INITIAL_USER_DATA,
   scores: null,
   recommendations: [],
+  currentPortfolio: null,
+  recommendedPortfolio: null,
+  costData: null,
+  behavioralData: null,
 }
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -84,6 +108,18 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case "SET_RECOMMENDATIONS":
       return { ...state, recommendations: action.payload }
 
+    case "SET_CURRENT_PORTFOLIO":
+      return { ...state, currentPortfolio: action.payload }
+
+    case "SET_RECOMMENDED_PORTFOLIO":
+      return { ...state, recommendedPortfolio: action.payload }
+
+    case "SET_COST_DATA":
+      return { ...state, costData: action.payload }
+
+    case "SET_BEHAVIORAL_DATA":
+      return { ...state, behavioralData: action.payload }
+
     case "RESET":
       return initialState
 
@@ -98,6 +134,7 @@ interface AppContextValue {
   goToScreen: (screen: Screen) => void
   goNext: () => void
   goBack: () => void
+  calculateResults: () => void
 }
 
 const AppContext = createContext<AppContextValue | null>(null)
@@ -135,8 +172,43 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const calculateResults = () => {
+    const userData = state.userData
+
+    // Calculate financial health scores
+    const scores = calculateFinancialHealthScores(userData)
+    dispatch({ type: "SET_SCORES", payload: scores })
+
+    // Generate current portfolio analysis
+    const currentPortfolio = generateCurrentPortfolio(userData)
+    dispatch({ type: "SET_CURRENT_PORTFOLIO", payload: currentPortfolio })
+
+    // Generate recommended portfolio
+    const recommendedPortfolio = generateRecommendedPortfolio(userData)
+    dispatch({ type: "SET_RECOMMENDED_PORTFOLIO", payload: recommendedPortfolio })
+
+    // Generate cost analysis
+    const costData = generateCostAnalysis(userData)
+    dispatch({ type: "SET_COST_DATA", payload: costData })
+
+    // Generate behavioral analysis
+    const behavioralData = generateBehavioralAnalysis(userData)
+    dispatch({ type: "SET_BEHAVIORAL_DATA", payload: behavioralData })
+
+    // Generate personalized recommendations
+    const recommendations = generateDetailedRecommendations(
+      userData,
+      scores,
+      costData,
+      behavioralData
+    )
+    dispatch({ type: "SET_RECOMMENDATIONS", payload: recommendations })
+  }
+
   return (
-    <AppContext.Provider value={{ state, dispatch, goToScreen, goNext, goBack }}>
+    <AppContext.Provider
+      value={{ state, dispatch, goToScreen, goNext, goBack, calculateResults }}
+    >
       {children}
     </AppContext.Provider>
   )
@@ -149,3 +221,6 @@ export function useApp() {
   }
   return context
 }
+
+// Re-export types for convenience
+export type { CurrentPortfolio, RecommendedPortfolio, CostData, BehavioralData }
