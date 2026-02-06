@@ -1,73 +1,156 @@
-# React + TypeScript + Vite
+# Financial Health Score
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A client-side web application that evaluates your overall financial well-being through an interactive questionnaire, then generates a personalized Financial Health Score (0-100) with tailored recommendations.
 
-Currently, two official plugins are available:
+## What It Does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Financial Health Score** helps individuals understand where they stand financially and what to improve.
 
-## React Compiler
+**How it works:**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. **Answer questions** - You fill out a short questionnaire about your situation (age, income, dependents), goals (retirement, home, education), investments (allocation, fees), and financial habits (trading frequency, panic selling)
 
-## Expanding the ESLint configuration
+2. **Instant analysis** - The app calculates your Financial Health Score from 0-100 across five weighted categories
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3. **Get a personalized report** - You receive:
+   - Your overall score with a color-coded gauge
+   - Category-by-category breakdown (investment strategy, cost efficiency, tax optimization, behavioral health, goal coverage)
+   - Portfolio comparison charts (current vs. recommended allocation)
+   - Cost analysis showing fee impact over 30 years
+   - Up to 5 prioritized action items with dollar impact estimates
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+4. **Take action** - Each recommendation includes specific steps and links to get started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**Why it matters:** Most people don't have a clear picture of their financial health. This tool gives them a quick, comprehensive assessment and a clear roadmap to improve—covering everything from investment fees eating into returns to behavioral habits that hurt performance.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Features
+
+- **Interactive Questionnaire**: 7-step assessment covering personal info, goals, investments, behavior, and financial gaps
+- **Weighted Scoring Engine**: Calculates scores across 5 categories with age-appropriate benchmarks
+- **Portfolio Analysis**: Compares current asset allocation to recommended targets with visual charts
+- **Cost Impact Visualization**: Shows how expense ratios and advisor fees compound over 30 years
+- **Behavioral Assessment**: Evaluates trading frequency, panic selling history, and portfolio monitoring habits
+- **Personalized Recommendations**: Up to 5 action items with priority levels, dollar impact, and step-by-step guidance
+- **Animated Results**: Score gauge animation, confetti for high scores, and smooth transitions throughout
+
+## Tech Stack
+
+### Frontend (everything runs in the browser)
+- **React** - A popular toolkit for building interactive web pages. It's like LEGO blocks for websites—you build small pieces (buttons, forms, cards) and snap them together.
+- **TypeScript** - JavaScript with training wheels. It catches mistakes before they become problems.
+- **Tailwind CSS** - A shortcut system for styling. Instead of writing custom design code, you use pre-made classes like "make this blue" or "add padding."
+- **Vite** - A tool that bundles all your code and makes the site load fast.
+- **Radix UI** - Pre-built accessible components (sliders, checkboxes, dialogs) that work with keyboards and screen readers out of the box.
+- **Recharts** - A charting library for the portfolio comparison and cost analysis visualizations.
+- **Framer Motion** - Handles all the smooth animations and transitions between screens.
+
+### No backend needed
+This app runs entirely in the browser. All scoring and recommendations are calculated client-side—no data is sent to a server, and nothing is stored. Your financial information stays on your device.
+
+## How Scoring Works
+
+The app evaluates financial health across **5 weighted categories**:
+
+| Category | Weight | What It Measures |
+|----------|--------|-----------------|
+| Investment Strategy | 25% | Asset allocation for your age, diversification, global exposure |
+| Cost Efficiency | 25% | Fund expense ratios, advisor fees, total annual costs |
+| Tax Optimization | 15% | Tax-advantaged account usage, 529 plans |
+| Behavioral Health | 20% | Trading frequency, panic selling, portfolio checking habits |
+| Goal Coverage | 15% | Emergency fund, insurance, estate plan, life-stage alignment |
+
+Each category scores 0-100, and the overall score is the weighted average.
+
+## Project Structure
+
+```
+financial-health-app/
+├── src/
+│   ├── App.tsx                    # Main app with screen routing
+│   ├── context/
+│   │   └── AppContext.tsx         # Global state management
+│   ├── types/
+│   │   └── index.ts              # TypeScript interfaces & constants
+│   ├── lib/
+│   │   ├── calculations.ts       # Scoring & analysis logic
+│   │   ├── recommendations.ts    # Recommendation generation
+│   │   └── utils.ts              # Helper functions
+│   ├── components/
+│   │   ├── Welcome.tsx           # Landing screen
+│   │   ├── Processing.tsx        # Loading animation
+│   │   ├── questions/            # Questionnaire steps
+│   │   │   ├── BasicInfo.tsx
+│   │   │   ├── GoalsTimeline.tsx
+│   │   │   ├── InvestmentSnapshot.tsx
+│   │   │   ├── BehavioralAssessment.tsx
+│   │   │   ├── FinancialGaps.tsx
+│   │   │   └── BiggestConcern.tsx
+│   │   ├── results/              # Results dashboard
+│   │   │   ├── ResultsDashboard.tsx
+│   │   │   ├── HeroScore.tsx
+│   │   │   ├── CategoryBreakdown.tsx
+│   │   │   ├── PortfolioComparison.tsx
+│   │   │   ├── CostAnalysis.tsx
+│   │   │   └── PriorityActions.tsx
+│   │   ├── shared/               # Reusable components
+│   │   └── ui/                   # Radix UI primitives
+│   └── public/                   # Static assets
+└── package.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- npm 9+
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd financial-health-app
 ```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+### Development
+
+Run the app in development mode:
+```bash
+npm run dev
+```
+
+This will start the app at http://localhost:5173
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+### Linting
+
+```bash
+npm run lint
+```
+
+## Deployment
+
+### Vercel
+
+1. Connect your repository to Vercel
+2. It will auto-detect Vite and configure the build
+3. No environment variables needed—everything runs client-side
+
+## Disclaimer
+
+This assessment provides general guidance based on the information provided. It does not constitute legal, financial, or tax advice. Users should consult with qualified financial professionals before making investment or planning decisions.
+
+## License
+
+MIT
